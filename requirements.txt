@@ -1,9 +1,9 @@
-docopt
-numpy
-scipy
-nltk
-scikit-learn
+docopt==0.6.2
+numpy==1.21.6
+scipy==1.7.3
+nltk==3.8.1
+scikit-learn==1.0.2
 protobuf==3.18.3
-ortools
-fuzzywuzzy
-dedupe-hcluster
+ortools==8.2.8710
+fuzzywuzzy==0.18.0
+dedupe-hcluster==0.3.9
