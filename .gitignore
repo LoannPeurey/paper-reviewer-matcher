@@ -2,6 +2,9 @@
 
 mind_match_feedback_form/data/*.json
 
+#pyCharm
+.idea
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
