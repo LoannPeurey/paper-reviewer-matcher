@@ -30,11 +30,6 @@ def assign_articles_to_reviewers(article_df, reviewer_df, people_df, max_mentees
     """
     papers = list((article_df['Title'] + ' ' + article_df['Abstract']).map(preprocess))
     reviewers = list(reviewer_df['Abstract'].map(preprocess))
-    
-    
-    papers_loc = list((article_df['locations']).map(preprocess))
-    reviewers_loc = list(reviewer_df['locations'].map(preprocess))
-    weight_loc = 0.5
 
     # Calculate conflict of interest based on co-authors
     coauthors_df = pd.DataFrame([[int(r.PaperID), int(co_author)]
@@ -53,35 +48,30 @@ def assign_articles_to_reviewers(article_df, reviewer_df, people_df, max_mentees
         n_components=3, min_df=2, max_df=0.8,
         weighting='tfidf', projection='pca'
     )
-    # print('======= Abstract matching ===========')
-    # print(A)
-    # print('-------shape------')
-    # print(A.shape)
-    # print('=====================================')
-    
+
+    # ADD A WEIGHTED ADDITIONAL MATCHING ON LOCATION DISCUSSED
+    papers_loc = list((article_df['locations']).map(preprocess))
+    reviewers_loc = list(reviewer_df['locations'].map(preprocess))
+    weight_loc = 0.5
     # calculate affinity matrix for locations
     B = compute_affinity(
         papers_loc, reviewers_loc,
         n_components=2, min_df=2, max_df=0.8,
         weighting='tfidf', projection='pca'
     )
-    # print('======= locations matching ===========')
-    # print(B)
-    # print('-------shape------')
-    # print(B.shape)
-    # print('=====================================')
 
-    papers_onsite = list((article_df['onsite']).map(preprocess))
-    reviewers_onsite = list(reviewer_df['onsite'].map(preprocess))
+    # ADD A WEIGHTED ADDITIONAL MATCHING ON ONSITE VS DISTANT
+    # papers_onsite = list((article_df['onsite']).map(preprocess))
+    # reviewers_onsite = list(reviewer_df['onsite'].map(preprocess))
+    # weight_onsite = 0.5
     # calculate affinity matrix for onsite or not onsite
-    C = compute_affinity(
-        papers_onsite, reviewers_onsite,
-        n_components=2, min_df=2, max_df=0.8,
-        weighting='tfidf', projection='pca'
-    )
-    weight_onsite = 0.5
+    # C = compute_affinity(
+    #     papers_onsite, reviewers_onsite,
+    #     n_components=2, min_df=2, max_df=0.8,
+    #     weighting='tfidf', projection='pca'
+    # )
     
-    A = A + (weight_loc * B) + (weight_onsite * C)
+    A = A + (weight_loc * B) #+ (weight_onsite * C)
     
     # trim distance that are too high
     A_trim = []
